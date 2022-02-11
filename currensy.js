@@ -1,17 +1,17 @@
-const [dropList, fromCurrency, toCurrency, getButton, exchangeIcon] = [document.querySelectorAll('form select'), document.querySelector('.from select'), document.querySelector('.to select'), document.querySelector('form button'), document.querySelector('form .icon')]
+const [dropList, fromCurrency, toCurrency, getButton, exchangeIcon] = [document.querySelectorAll("form select"), document.querySelector(".from select"), document.querySelector(".to select"), document.querySelector("form button"), document.querySelector("form .icon")]
 
-for (let a = 0; a < dropList.length; a++) {  // bowlanganda default value beriw va qogan narsalaniyam oqitvolish
+for (let i = 0; i < dropList.length; i++) {
     for(let currency_code in country_list){
-        let selected = a == 0 ? currency_code == "USD" ? "selected" : "" : currency_code == "UZS" ? "selected" : "";
+        let selected = i == 0 ? currency_code == "USD" ? "selected" : "" : currency_code == "UZS" ? "selected" : "";
         let optionTag = `<option value="${currency_code}" ${selected}>${currency_code}</option>`;
-        dropList[a].insertAdjacentHTML("beforeend", optionTag);
+        dropList[i].insertAdjacentHTML("beforeend", optionTag);
     }
-    dropList[a].addEventListener("change", e =>{
+    dropList[i].addEventListener("change", e =>{
         loadFlag(e.target);
     });
 }
 
-function loadFlag(element){  // rasmlani joylaw
+function loadFlag(element){
     for(let code in country_list){
         if(code == element.value){
             let imgTag = element.parentElement.querySelector("img");
@@ -20,16 +20,19 @@ function loadFlag(element){  // rasmlani joylaw
     }
 }
 
-window.addEventListener("load", ()=>{  // load boliwi bilan 1 dollar neci som boliwini bilgan joyi
-    getExchangeRate();
+window.addEventListener("load", () => getExchangeRate());
+
+getButton.addEventListener("click", e => {
+    if (!isNaN(input.value)) {
+        e.preventDefault(); 
+        getExchangeRate()
+    } else {
+        alert('Deeng')
+        input.value = null
+    }
 });
 
-getButton.addEventListener("click", e =>{  // exchange button ni bosiwi bilan hisoblab beradi
-    e.preventDefault();
-    getExchangeRate();
-});
-
-exchangeIcon.addEventListener("click", () => {  // qaysidir dovlat ustiga bosilsa owani icon nini ozgartiradigan event
+exchangeIcon.addEventListener("click", () => {
     let tempCode = fromCurrency.value;
     fromCurrency.value = toCurrency.value;
     toCurrency.value = tempCode;
@@ -38,17 +41,20 @@ exchangeIcon.addEventListener("click", () => {  // qaysidir dovlat ustiga bosils
     getExchangeRate();
 })
 
-function getExchangeRate(){  // pulli aniqlab beradgan funciton
-    const [amount, exchangeRateTxt] = [document.querySelector('form input'), document.querySelector('form .exchange-rate')]
+function getExchangeRate(){
+    const [amount, exchangeRateTxt] =[ document.querySelector("form input"), document.querySelector("form .exchange-rate")]
     let amountVal = amount.value;
-    if(amountVal == "" || amountVal == "0") amount.value = "1";amountVal = 1;
-    exchangeRateTxt.innerText = "Sabr !!!";
+    if(amountVal == "" || amountVal == "0"){
+        amount.value = "1";
+        amountVal = 1;
+    }
+    exchangeRateTxt.innerText = "Sabr...";
     let url = `https://v6.exchangerate-api.com/v6/cb2907d2a2d7ac0e9832d3fd/latest/${fromCurrency.value}`;
     fetch(url).then(response => response.json()).then(result =>{
         let exchangeRate = result.conversion_rates[toCurrency.value];
         let totalExRate = (amountVal * exchangeRate).toFixed(2);
         exchangeRateTxt.innerText = `${amountVal} ${fromCurrency.value} = ${totalExRate} ${toCurrency.value}`;
     }).catch(() =>{
-        exchangeRateTxt.innerText = "Something went wrong";
+        exchangeRateTxt.innerText = "Texnik nosozlik";
     });
 }
