@@ -18,6 +18,7 @@ function loadFlag(element){
             imgTag.src = `https://flagcdn.com/48x36/${country_list[code].toLowerCase()}.png`;
         }
     }
+    getExchangeRate()
 }
 
 window.addEventListener("load", () => getExchangeRate());
@@ -41,8 +42,8 @@ exchangeIcon.addEventListener("click", () => {
     getExchangeRate();
 })
 
-function getExchangeRate(){
-    const [amount, exchangeRateTxt] =[ document.querySelector("form input"), document.querySelector("form .exchange-rate")]
+function getExchangeRate() {
+    const [amount, exchangeRateTxt] = [ document.querySelector("form input"), document.querySelector("form .exchange-rate")]
     let amountVal = amount.value;
     if(amountVal == "" || amountVal == "0"){
         amount.value = "1";
